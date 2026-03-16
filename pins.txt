@@ -1,0 +1,16 @@
+gpio 34 - photo resistor (- 3V) - 10kohm -> photo resistor(+ 3V) 
+gpio 22 - data motor -> (+) (-) 3V
+gpio 27 - motion sensor (+ - 5V)
+gpio 21 - air sensor (5V 1+ 4-) -> gpio 21 - data(2) - 4,7kohm(+)
+
+screen
+white gnd to 3v3gnd
+brown black to +- 5V
+sd_cs - gpio 26
+white tp_cs -> gpio 15
+purple lcd_dc -> gpio 2
+lcd_bl blue  -> gpio 32
+red sclk -> gpio 18
+orange miso -> gpio 19
+yellow mosi -> gpio 23
+green lcd_cs -> gpio 5
