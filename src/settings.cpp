@@ -1,28 +1,24 @@
 #include <array>
 #include <include/bedridden.hpp>
 
-static uint8_t activeFocus = 0;
+static int8_t activeFocus = -1;
 static uint32_t pressStartTime = 0;
 static bool lastPhysicalState = false;
 static uint8_t lightValue = 70;
+const uint8_t menuSizes[] = {2, 4, 5};
 
 void moveFocus(std::array<std::array<Button, 5>, 3>& buttons, uint8_t menu)
 {
   Button buttonOld = buttons[menu][activeFocus];
-  tft.drawRect(buttonOld.x, buttonOld.y, buttonOld.w, buttonOld.h, TFT_BLACK);
-  buttonOld.isFocused = false;
+  tft.fillRect(buttonOld.x, buttonOld.y, buttonOld.w, buttonOld.h, TFT_BLACK);
 
-  uint8_t maxButtons = 0;
-  switch (menu) {
-    case 0: maxButtons = 2;
-    case 1: maxButtons = 4;
-    case 2: maxButtons = 5;
-  }
+  
+  uint8_t maxButtons = menuSizes[menu];
   activeFocus = (activeFocus + 1) % maxButtons;
 
-  Button button = buttons[menu][activeFocus];
-  tft.drawRect(button.x, button.y, button.w, button.h, TFT_DARKGREY);
-  button.isFocused = true;
+  Button& button = buttons[menu][activeFocus];
+  tft.fillRect(button.x, button.y, button.w, button.h, TFT_DARKGREY);
+  reprintAfterFocus(menu, activeFocus);
 }
 
 void executeButtonAction(uint8_t& menu) {
@@ -61,23 +57,31 @@ void executeButtonAction(uint8_t& menu) {
 }
 
 void handleInput(std::array<std::array<Button, 5>, 3>& buttons, uint8_t& menu, bool isPhysicallyPressed) {
-  
-  if (isPhysicallyPressed && !lastPhysicalState) {
-    pressStartTime = millis();
-  }
+    static uint32_t lastInteractTick = 0;
 
-  if (!isPhysicallyPressed && lastPhysicalState) {
-    uint32_t duration = millis() - pressStartTime;
-
-    if (duration > 50 && duration < 1000) {
-      Serial.println("short click");
-      moveFocus(buttons, menu);
-    } 
-    else if (duration >= 1000) { 
-      Serial.println("long click");
-      executeButtonAction(menu);
+    // --- Focus timeout ---
+    if (activeFocus != -1 && (millis() - lastInteractTick >= 5000)) {
+        Button& button = buttons[menu][activeFocus];
+        tft.fillRect(button.x, button.y, button.w, button.h, TFT_BLACK);
+        reprintAfterFocus(menu, activeFocus);
+        activeFocus = -1;
     }
-  }
 
-  lastPhysicalState = isPhysicallyPressed;
+    // --- Edge detection ---
+    bool pressed  = isPhysicallyPressed && !lastPhysicalState;
+    bool released = !isPhysicallyPressed && lastPhysicalState;
+    lastPhysicalState = isPhysicallyPressed;
+
+    if (isPhysicallyPressed) pressStartTime = millis(); // track hold start
+
+    if (pressed) {
+        lastInteractTick = millis(); // reset timeout on any press
+        moveFocus(buttons, menu);
+    }
+
+    // long press ~1s = execute
+    if (released && (millis() - pressStartTime >= 1000)) {
+        lastInteractTick = millis();
+        executeButtonAction(menu);
+    }
 }

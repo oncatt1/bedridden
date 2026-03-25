@@ -41,7 +41,7 @@ public:
     }
 
     template <typename T>
-    void Print(const T value)
+    void Print(const T value, uint16_t customBackColor = 0)
     {
         char currentText[32];
         snprintf(currentText, sizeof(currentText), "%s", String(value).c_str());
@@ -50,7 +50,9 @@ public:
             return;
 
         tft.setTextSize(size);
-        tft.setTextColor(color, backgroundColor);
+        
+        if (customBackColor == 0) tft.setTextColor(color, backgroundColor);
+        else tft.setTextColor(color, customBackColor);
 
         tft.setTextDatum(TL_DATUM);
 
@@ -65,7 +67,7 @@ public:
     }
 
     template <typename T>
-    void PrintCentered(const T value)
+    void PrintCentered(const T value, uint16_t customBackColor = 0)
     {
         char currentText[32];
         snprintf(currentText, sizeof(currentText), "%s", String(value).c_str());
@@ -74,7 +76,10 @@ public:
             return;
 
         tft.setTextSize(size);
-        tft.setTextColor(color, backgroundColor);
+
+        if (customBackColor == 0) tft.setTextColor(color, backgroundColor);
+        else tft.setTextColor(color, customBackColor);
+
         tft.setTextDatum(TC_DATUM);
 
         tft.setTextPadding(width > 0 ? width : tft.textWidth(lastText));
@@ -82,5 +87,10 @@ public:
         tft.drawString(currentText, cursorX + (width / 2), cursorY);
 
         strncpy(lastText, currentText, sizeof(lastText));
+    }
+
+    void forceRedraw() 
+    {
+        lastText[0] = '\0';
     }
 };

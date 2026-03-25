@@ -147,52 +147,54 @@ void drawIconWind(int rotation, int16_t x, int16_t y)
 
 void drawIconWeather(int weatherCode, int16_t x, int16_t y, bool wind, bool night, float scale)
 {
-    // add night and wind support
-    // add snow grains and showers
-    const char *image = "/icons/unknown.bmp";
-    if (!night && !wind) // day without wind
-    {
-        if (weatherCode == 0)
-            image = "/icons/clear_day.bmp"; // clear sky clear_day_wind.bmp clear_night.bmp clear-night-wind.bmp
-        else if (weatherCode == 1)
-            image = "/icons/mostly_clear_day.bmp"; // mainly clear
-        else if (weatherCode == 2)
-            image = "/icons/partly_cloudy_day.bmp"; // partly cloudy
-        else if (weatherCode == 3)
-            image = "/icons/cloudy.bmp"; // overcast cloudy_wind.bmp
-        else if (weatherCode == 45 || weatherCode == 48)
-            image = "/icons/fog.bmp"; // fog
-        else if (weatherCode == 51 || weatherCode == 53 || weatherCode == 55)
-            image = "/icons/drizzle.bmp"; // drizzle
-        else if (weatherCode == 56 || weatherCode == 57)
-            image = "/icons/freezing_drizzle.bmp"; // freezing drizzle
-        else if (weatherCode == 66 || weatherCode == 67)
-            image = "/icons/freezing_rain.bmp"; // freezing rain
-        else if (weatherCode == 71 || weatherCode == 73 || weatherCode == 75)
-            image = "/icons/snow.bmp"; // snow fall
-        else if (weatherCode == 77)
-            image = "/icons/.bmp"; // snow grains !!!!!!!!!!!!
-        else if (weatherCode == 80 || weatherCode == 81 || weatherCode == 82)
-            image = "/icons/rain.bmp"; // rain
-        else if (weatherCode == 85 || weatherCode == 86)
-            image = "/icons/.bmp"; // snow showers !!!!!!!
-        else if (weatherCode == 95)
-            image = "/icons/thunderstorm.bmp"; // thundersorm
-        else if (weatherCode == 96 || weatherCode == 99)
-            image = "/icons/thunderstorm_hail.bmp"; // thunderstorm with hail
-    }
+    const char* image = "/icons/unknown.bmp";
 
-    if (!night && wind) // day with wind
+    if (weatherCode <= 3)
     {
+        // Indexed by [night][wind][weatherCode]
+        static const char* const table[2][2][4] = {
+            { // day
+                { // no wind
+                    "/icons/clear_day.bmp",
+                    "/icons/mostly_clear_day.bmp",
+                    "/icons/partly_cloudy_day.bmp",
+                    "/icons/cloudy.bmp"
+                },
+                { // wind
+                    "/icons/clear_day_wind.bmp",
+                    "/icons/mostly_clear_day_wind.bmp",      
+                    "/icons/partly_cloudy_day_wind.bmp",
+                    "/icons/mostly_cloudy_day_wind.bmp"
+                },
+            },
+            { // night
+                { // no wind
+                    "/icons/clear_night.bmp",
+                    "/icons/mostly_clear_night.bmp",
+                    "/icons/partly_cloudy_night.bmp",
+                    "/icons/mostly_cloudy_night.bmp"
+                },
+                { // wind
+                    "/icons/clear_night_wind.bmp",
+                    "/icons/mostly_clear_night_wind.bmp",
+                    "/icons/partly_cloudy_night_wind.bmp",
+                    "/icons/mostly_cloudy_night_wind.bmp"
+                    
+                }
+            }
+        };
+        image = table[night][wind][weatherCode];
     }
-
-    if (night && wind) // night with wind
-    {
-    }
-
-    if (night && !wind) // night without wind
-    {
-    }
+    else if (weatherCode == 45 || weatherCode == 48)  image = "/icons/fog.bmp";
+    else if (weatherCode == 51 || weatherCode == 53 || weatherCode == 55) image = "/icons/drizzle.bmp";
+    else if (weatherCode == 56 || weatherCode == 57)  image = "/icons/freezing_drizzle.bmp";
+    else if (weatherCode == 66 || weatherCode == 67)  image = "/icons/freezing_rain.bmp";
+    else if (weatherCode == 71 || weatherCode == 73 || weatherCode == 75) image = "/icons/snow.bmp";
+    else if (weatherCode == 77)                       image = "/icons/snow_grains.bmp";
+    else if (weatherCode == 80 || weatherCode == 81 || weatherCode == 82) image = "/icons/rain.bmp";
+    else if (weatherCode == 85 || weatherCode == 86)  image = "/icons/snow_shower.bmp";
+    else if (weatherCode == 95)                       image = "/icons/thunderstorm.bmp";
+    else if (weatherCode == 96 || weatherCode == 99)  image = "/icons/thunderstorm_hail.bmp";
 
     drawBmp(image, x, y, scale);
 }

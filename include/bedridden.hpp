@@ -16,7 +16,7 @@
 class Sensors;
 class DHT11;
 struct Button {
-  bool isFocused = false;
+  char* name;
   int32_t x = 0, y = 0, w = 0, h = 0;
 };
 
@@ -44,6 +44,7 @@ extern void drawLineV(uint16_t _x, uint16_t _y, uint16_t _h, uint16_t color = TF
 extern void drawBmp(const char *filename, int16_t x, int16_t y, float scale = 1);
 extern void drawIconWind(int rotation, int16_t x, int16_t y);
 extern void drawIconWeather(int weatherCode, int16_t x, int16_t y, bool wind = false, bool night = false, float scale = 1);
+extern void reprintAfterFocus(uint8_t& menu, int8_t& focus);
 
 extern void showSettings();
 extern void showAlarm();

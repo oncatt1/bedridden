@@ -72,6 +72,41 @@ void printStaticTexts()
     textNow.PrintCentered("NOW");
 }
 
+void reprintAfterFocus(uint8_t& menu, int8_t& focus)
+{
+    if (menu == 0) {
+        if (focus == 0) { // on menu
+            drawBmp("/icons/clock.bmp", 245, 50);
+            drawBmp("/icons/focused_settings.bmp", 295, 10);
+            textAlarm.forceRedraw();
+            textAlarm.Print("6:30");
+        }
+        else { // on clock
+            drawBmp("/icons/focused_clock.bmp", 245, 50);
+            drawBmp("/icons/settings.bmp", 295, 10);
+            textAlarm.forceRedraw();
+            textAlarm.Print("6:30", TFT_DARKGREY);
+        }
+    }
+    else if(menu == 1) {
+        if (focus == 0) {
+            drawBmp("/icons/home.bmp", 295, 10);
+        }
+        else if (focus == 1){
+            drawBmp("/icons/focused_home.bmp", 295, 10);
+        }
+        else if (focus == 2){
+            
+        }
+        else if (focus == 3){
+        }
+        printSettingsTexts();
+    }
+    else if (menu == 2) {
+        printAlarmTexts();
+    }
+}
+
 int lastDay = -1;
 void printTimeTexts(bool force = false)
 {

@@ -45,22 +45,22 @@ bool firstBoot = true;
 bool menuNotChanged = true;
 bool forceSensors = false;
 uint8_t menu = 0;
-std::array<std::array<Button, 5>, 3> buttons = {{     //POJEBANY PROBLEM BO JAK BEDE WYCIAGAL PRZYCISK TO SUFIT SIE ROZPIERDALAC BEDZIE ALBO MOZE KABEL BEDZIE WYSTARCZAJACO DLUGI NW
+std::array<std::array<Button, 5>, 3> buttons = {{  
 
   {{
-    {false, 240, 0, 40, 40}, 
-    {false, 240, 40, 79, 40},
+    {"settings", 280, 0, 40, 39}, 
+    {"alarm", 240, 40, 79, 39},
     {}, {}, {}
   }},
   {{
-    {false, 240, 0, 40, 40}, 
-    {false, 63, 40, (int32_t)(TFT_HEIGHT * 3 / 5), 66}, 
-    {false, 63, 106, (int32_t)(TFT_HEIGHT * 3 / 5), 66}, 
-    {false, 63, 172, (int32_t)(TFT_HEIGHT * 3 / 5), 66},
+    {"home", 280, 0, 40, 39}, 
+    {"light", 63, 40, (int32_t)(TFT_HEIGHT * 3 / 5), 65}, 
+    {"refresh", 63, 106, (int32_t)(TFT_HEIGHT * 3 / 5), 65}, 
+    {"reboot", 63, 172, (int32_t)(TFT_HEIGHT * 3 / 5), 65},
     {}
   }},
   {{
-    {false, 240, 0, 20, 20}, {}, {}, {}, {}
+    {"home", 240, 0, 20, 20}, {}, {}, {}, {}
   }}
 }};
 
@@ -110,10 +110,8 @@ void loop() // alarm - setup, status, detailed weather????
   time_t now = time(nullptr); 
 
   static uint32_t lastTouchTick = 0;
-  if (millis() - lastTouchTick >= 50) { // button click
-    bool reading = digitalRead(PIN_BUTTON) == LOW;
-    handleInput(buttons, menu, reading);
-  }
+  bool reading = digitalRead(PIN_BUTTON) == LOW;
+  handleInput(buttons, menu, reading);
 
   if (now != lastSeenSec && menu == 0) { // weather actions 
     lastSeenSec = now;
